@@ -1,0 +1,50 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: #222;
+  background: #fafafa;
+}
+
+.hdr {
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+.hdr h1 { margin: 0 0 4px; font-size: 18px; }
+.stats { margin: 0; color: #888; font-size: 13px; }
+
+main { padding: 16px 24px; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 6px; overflow: hidden; }
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+}
+th { background: #f7f7f7; font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+td a { color: #389; text-decoration: none; font-weight: 600; }
+td a:hover { text-decoration: underline; }
+
+.btn {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 4px;
+}
+.btn:hover { background: #f0f0f0; }
+.btn-fail { color: #c33; }
+.btn-pass { color: #2a7; }
+.btn-del { color: #999; }
+
+.empty { color: #888; padding: 24px; text-align: center; }
+
+.due-overdue { color: #c33; font-weight: 600; }
+.due-soon { color: #d80; }

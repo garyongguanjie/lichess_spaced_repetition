@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Lichess Spaced Repetition",
+  "version": "0.1.0",
+  "description": "Save failed Lichess puzzles and review them with spaced repetition.",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": ["https://lichess.org/*"],
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://lichess.org/training/*"],
+      "js": ["content_script.js"]
+    }
+  ]
+}

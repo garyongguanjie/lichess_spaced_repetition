@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lichess SRS — Puzzles</title>
+    <link rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <header class="hdr">
+      <h1>Lichess Spaced Repetition</h1>
+      <p class="stats">
+        <span id="dueCount">0</span> due · <span id="totalCount">0</span> saved · <a href="about.html">How it works</a>
+      </p>
+    </header>
+
+    <main>
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th>Puzzle</th>
+            <th>Interval</th>
+            <th>Ease</th>
+            <th>Reps</th>
+            <th>Due</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p id="empty" class="empty hidden">No puzzles saved yet. Use the extension popup on a lichess.org/training/* page.</p>
+    </main>
+
+    <script src="../lib/sm2.js"></script>
+    <script src="../lib/priority.js"></script>
+    <script src="../lib/storage.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

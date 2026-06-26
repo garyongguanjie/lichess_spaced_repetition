@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Lichess SRS — About</title>
+    <link rel="stylesheet" href="main.css" />
+    <style>
+      .about { max-width: 680px; line-height: 1.6; }
+      .about h2 { margin-top: 24px; font-size: 16px; }
+      .about p, .about ul { color: #444; }
+      .about code { background: #f3f3f3; padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+      .about table { margin: 12px 0; }
+      .back { margin-bottom: 16px; }
+    </style>
+  </head>
+  <body>
+    <header class="hdr">
+      <h1>About the Algorithm</h1>
+      <p class="stats"><a href="main.html">&larr; Back to puzzles</a></p>
+    </header>
+
+    <main class="about">
+      <p>
+        This extension uses the <strong>SM-2</strong> spaced repetition algorithm
+        (the same family of algorithms powering Anki) to schedule when you should
+        revisit each saved Lichess puzzle.
+      </p>
+
+      <h2>How it works</h2>
+      <p>
+        Every puzzle is a "card" with three key fields:
+      </p>
+      <ul>
+        <li><strong>Interval</strong> — how many days until the puzzle is shown again.</li>
+        <li><strong>Ease</strong> — a multiplier (starts at <code>2.5</code>) controlling how fast the interval grows.</li>
+        <li><strong>Repetitions</strong> — how many times in a row you've passed it.</li>
+      </ul>
+
+      <h2>Grading</h2>
+      <p>When you review a puzzle you mark it <strong>Pass</strong> or <strong>Fail</strong>:</p>
+      <ul>
+        <li><strong>Pass</strong> — the interval grows. The first pass sets it to 1 day, the second to 3 days, and afterwards the new interval is <code>round(interval &times; ease)</code>. The ease increases slightly (<code>+0.1</code>) as a reward.</li>
+        <li><strong>Fail</strong> — the interval resets to 1 day, repetitions return to 0, and the ease drops by <code>0.2</code> (never below <code>1.3</code>) so future intervals grow more slowly.</li>
+      </ul>
+
+      <h2>Example schedule</h2>
+      <table>
+        <thead>
+          <tr><th>Reps</th><th>Ease</th><th>Next interval</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0 &rarr; 1</td><td>2.5</td><td>1 day</td></tr>
+          <tr><td>1 &rarr; 2</td><td>2.6</td><td>3 days</td></tr>
+          <tr><td>2 &rarr; 3</td><td>2.7</td><td>~8 days</td></tr>
+          <tr><td>3 &rarr; 4</td><td>2.8</td><td>~22 days</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Why it works</h2>
+      <p>
+        Spaced repetition exploits the <em>spacing effect</em>: reviewing material
+        just as you're about to forget it strengthens memory far more than
+        cramming. By spacing puzzle reviews at increasing intervals, you spend
+        less time on puzzles you know well and more on the ones you keep missing.
+      </p>
+    </main>
+
+    <script src="../lib/sm2.js"></script>
+  </body>
+</html>

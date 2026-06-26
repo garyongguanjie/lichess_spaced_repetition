@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="hdr">
+        <span class="title">Lichess SRS</span>
+        <a id="openMain" class="link" href="#">Main page</a>
+      </header>
+
+      <!-- View A: Capture -->
+      <section id="view-capture" class="view hidden">
+        <p class="muted">Current puzzle</p>
+        <p><a id="capLink" class="puzzle" target="_blank" rel="noopener">#<span id="capId">—</span></a></p>
+        <p class="muted">Failed it? Save for review.</p>
+        <div class="btn-row">
+          <button id="btnFail" class="btn btn-fail">Fail</button>
+          <button id="btnPass" class="btn btn-pass">Pass</button>
+        </div>
+        <p id="capMsg" class="msg"></p>
+        <button id="btnCapReview" class="btn btn-ghost">Review saved puzzles</button>
+      </section>
+
+      <!-- View B: Review session -->
+      <section id="view-review" class="view hidden">
+        <p class="muted">Review <span id="revProgress"></span></p>
+        <p><a id="revLink" class="puzzle" target="_blank" rel="noopener">#<span id="revId">—</span></a></p>
+        <button id="btnOpenLichess" class="btn btn-link">Open on Lichess</button>
+        <p class="muted small">Solve it, then grade:</p>
+        <div class="btn-row">
+          <button id="btnRevFail" class="btn btn-fail">Fail</button>
+          <button id="btnRevPass" class="btn btn-pass">Pass</button>
+        </div>
+        <p id="revEmpty" class="msg hidden">No puzzles to review.</p>
+        <button id="btnEndSession" class="btn btn-ghost">End session</button>
+      </section>
+
+      <!-- View C: Dashboard actions -->
+      <section id="view-dash" class="view hidden">
+        <p><span id="dueCount">0</span> due · <span id="totalCount">0</span> saved</p>
+        <button id="btnReview" class="btn btn-link">Review now</button>
+        <p id="dashHint" class="muted small">
+          Open a <a href="https://lichess.org/training" target="_blank" rel="noopener">lichess training</a> page to capture a puzzle.
+        </p>
+      </section>
+    </div>
+
+    <script src="../lib/sm2.js"></script>
+    <script src="../lib/priority.js"></script>
+    <script src="../lib/storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
