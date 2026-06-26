@@ -1,6 +1,17 @@
 const rowsEl = document.getElementById("rows");
 const emptyEl = document.getElementById("empty");
 const tblEl = document.getElementById("tbl");
+const warnEl = document.getElementById("warn");
+
+function showWarn(msg) {
+  warnEl.textContent = msg;
+  warnEl.classList.remove("hidden");
+}
+
+function hideWarn() {
+  warnEl.classList.add("hidden");
+  warnEl.textContent = "";
+}
 
 function dueClass(puzzle, now) {
   if (puzzle.dueAt <= now) return "due-overdue";
@@ -10,6 +21,7 @@ function dueClass(puzzle, now) {
 
 function render(puzzles) {
   rowsEl.innerHTML = "";
+  hideWarn();
   const now = Date.now();
   document.getElementById("dueCount").textContent = puzzles.filter((p) => p.dueAt <= now).length;
   document.getElementById("totalCount").textContent = puzzles.length;
@@ -79,6 +91,11 @@ async function grade(id, passed) {
   const puzzle = await Storage.get(id);
   if (!puzzle) return;
   const now = Date.now();
+  if (puzzle.dueAt > now) {
+    showWarn(`#${id} is ${Priority.relativeDue(puzzle, now)} — grading is locked until it's due. SM2 numbers will not change.`);
+    return;
+  }
+  hideWarn();
   const updated = passed ? SM2.pass(puzzle, now) : SM2.fail(puzzle, now);
   await Storage.update(id, updated);
   const all = await Storage.list();

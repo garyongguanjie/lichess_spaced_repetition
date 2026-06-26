@@ -48,3 +48,6 @@ td a:hover { text-decoration: underline; }
 
 .due-overdue { color: #c33; font-weight: 600; }
 .due-soon { color: #d80; }
+
+.hidden { display: none; }
+.warn { color: #c33; padding: 8px 12px; margin: 0 0 12px; background: #fff4f4; border: 1px solid #f0c8c8; border-radius: 4px; font-size: 13px; }

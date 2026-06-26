@@ -48,8 +48,9 @@ let reviewQueue = [];
 let reviewIdx = 0;
 
 async function startReviewSession() {
-  const all = await Storage.list();
-  reviewQueue = Priority.rank(all, Date.now());
+  const now = Date.now();
+  const due = (await Storage.list()).filter((p) => p.dueAt <= now);
+  reviewQueue = Priority.rank(due, now);
   reviewIdx = 0;
   renderReviewItem();
 }
