@@ -41,6 +41,8 @@ body {
 
 .msg { color: #2a7; margin: 6px 0; min-height: 16px; }
 
+.warn { color: #c33; margin: 6px 0; padding: 6px 8px; background: #fff4f4; border: 1px solid #f0c8c8; border-radius: 4px; font-size: 12px; }
+
 .btn-row { display: flex; gap: 8px; margin: 8px 0; }
 
 .btn {

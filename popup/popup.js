@@ -37,11 +37,26 @@ async function renderDashboard() {
   show("dash");
 }
 
+let capturePuzzle = null;
+
 async function renderCapture(puzzle) {
+  const stored = await Storage.get(puzzle.id);
+  capturePuzzle = stored || { ...puzzle, dueAt: 0 };
   el("capId").textContent = puzzle.id;
   el("capLink").href = puzzle.url;
   el("capMsg").textContent = "";
+  el("capWarn").classList.add("hidden");
+  el("capWarn").textContent = "";
+  el("btnFail").disabled = false;
+  el("btnPass").disabled = false;
   show("capture");
+}
+
+function captureLockedWarn(now = Date.now()) {
+  const p = capturePuzzle;
+  if (!p) return null;
+  if (p.dueAt <= now) return null;
+  return `#${p.id} is ${Priority.relativeDue(p, now)} — grading is locked until it's due. SM2 numbers will not change.`;
 }
 
 let reviewQueue = [];
@@ -56,6 +71,8 @@ async function startReviewSession() {
 }
 
 function renderReviewItem() {
+  el("revWarn").classList.add("hidden");
+  el("revWarn").textContent = "";
   if (reviewIdx >= reviewQueue.length) {
     el("revEmpty").classList.remove("hidden");
     el("revId").textContent = "—";
@@ -79,6 +96,15 @@ async function gradeCurrent(passed) {
   if (reviewIdx >= reviewQueue.length) return;
   const p = reviewQueue[reviewIdx];
   const now = Date.now();
+  if (p.dueAt > now) {
+    const warn = el("revWarn");
+    warn.textContent = `#${p.id} is ${Priority.relativeDue(p, now)} — grading is locked until it's due. SM2 numbers will not change.`;
+    warn.classList.remove("hidden");
+    return;
+  }
+  const warn = el("revWarn");
+  warn.classList.add("hidden");
+  warn.textContent = "";
   const updated = passed ? SM2.pass(p, now) : SM2.fail(p, now);
   await Storage.update(p.id, updated);
   reviewIdx++;
@@ -86,6 +112,13 @@ async function gradeCurrent(passed) {
 }
 
 el("btnFail").addEventListener("click", async () => {
+  const warn = captureLockedWarn();
+  if (warn) {
+    const w = el("capWarn");
+    w.textContent = warn;
+    w.classList.remove("hidden");
+    return;
+  }
   const tab = await getActiveTab();
   const puzzle = await queryCurrentPuzzle(tab.id);
   if (!puzzle) return;
@@ -96,7 +129,16 @@ el("btnFail").addEventListener("click", async () => {
   setTimeout(() => window.close(), 700);
 });
 
-el("btnPass").addEventListener("click", () => window.close());
+el("btnPass").addEventListener("click", () => {
+  const warn = captureLockedWarn();
+  if (warn) {
+    const w = el("capWarn");
+    w.textContent = warn;
+    w.classList.remove("hidden");
+    return;
+  }
+  window.close();
+});
 
 el("btnCapReview").addEventListener("click", async () => {
   await startReviewSession();
