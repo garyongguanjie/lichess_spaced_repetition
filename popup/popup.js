@@ -1,6 +1,8 @@
 const el = (id) => document.getElementById(id);
+// Toggle the lower "body" view (review or dashboard). The capture section is
+// independent and stays visible whenever we're on a training page.
 const show = (view) => {
-  ["capture", "review", "dash"].forEach((v) => el(`view-${v}`).classList.add("hidden"));
+  ["review", "dash"].forEach((v) => el(`view-${v}`).classList.add("hidden"));
   el(`view-${view}`).classList.remove("hidden");
 };
 
@@ -16,16 +18,26 @@ async function getActiveTab() {
 }
 
 function isTrainingUrl(url) {
-  return /^https:\/\/lichess\.org\/training\//.test(url || "");
+  return /^https:\/\/lichess\.org\/training(\/|$)/.test(url || "");
 }
 
 async function queryCurrentPuzzle(tabId) {
-  return new Promise((resolve) => {
+  const viaMsg = await new Promise((resolve) => {
     chrome.tabs.sendMessage(tabId, { type: "getCurrentPuzzle" }, (resp) => {
       if (chrome.runtime.lastError) return resolve(null);
       resolve(resp);
     });
   });
+  if (viaMsg) return viaMsg;
+  try {
+    const [res] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: extractPuzzle,
+    });
+    return res ? res.result : null;
+  } catch {
+    return null;
+  }
 }
 
 async function renderDashboard() {
@@ -49,7 +61,8 @@ async function renderCapture(puzzle) {
   el("capWarn").textContent = "";
   el("btnFail").disabled = false;
   el("btnPass").disabled = false;
-  show("capture");
+  el("view-capture").classList.remove("hidden");
+  el("capDivider").classList.remove("hidden");
 }
 
 function captureLockedWarn(now = Date.now()) {
@@ -126,10 +139,11 @@ el("btnFail").addEventListener("click", async () => {
   el("capMsg").textContent = "Saved for review ✓";
   el("btnFail").disabled = true;
   el("btnPass").disabled = true;
-  setTimeout(() => window.close(), 700);
+  // Keep the popup open so review can continue; refresh dashboard counts if shown.
+  if (!el("view-dash").classList.contains("hidden")) renderDashboard();
 });
 
-el("btnPass").addEventListener("click", () => {
+el("btnPass").addEventListener("click", async () => {
   const warn = captureLockedWarn();
   if (warn) {
     const w = el("capWarn");
@@ -137,12 +151,19 @@ el("btnPass").addEventListener("click", () => {
     w.classList.remove("hidden");
     return;
   }
-  window.close();
-});
-
-el("btnCapReview").addEventListener("click", async () => {
-  await startReviewSession();
-  show("review");
+  const stored = await Storage.get(capturePuzzle.id);
+  if (stored) {
+    const now = Date.now();
+    const updated = SM2.pass(stored, now);
+    await Storage.update(capturePuzzle.id, updated);
+    capturePuzzle = { ...stored, ...updated };
+    el("capMsg").textContent = "Passed — rescheduled ✓";
+  } else {
+    el("capMsg").textContent = "Nice ✓";
+  }
+  el("btnFail").disabled = true;
+  el("btnPass").disabled = true;
+  if (!el("view-dash").classList.contains("hidden")) renderDashboard();
 });
 
 el("btnReview").addEventListener("click", async () => {
@@ -164,10 +185,8 @@ el("btnEndSession").addEventListener("click", renderDashboard);
   const tab = await getActiveTab();
   if (isTrainingUrl(tab.url)) {
     const puzzle = await queryCurrentPuzzle(tab.id);
-    if (puzzle) {
-      renderCapture(puzzle);
-      return;
-    }
+    if (puzzle) renderCapture(puzzle);
   }
+  // Dashboard is always the default lower view; capture (if any) sits above it.
   await renderDashboard();
 })();

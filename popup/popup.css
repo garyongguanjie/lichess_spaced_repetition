@@ -28,6 +28,8 @@ body {
 .view { padding: 12px; }
 .hidden { display: none !important; }
 
+.divider { border-top: 1px solid #eee; }
+
 .muted { color: #888; margin: 4px 0; }
 .small { font-size: 11px; }
 

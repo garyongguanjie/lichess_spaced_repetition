@@ -10,8 +10,8 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://lichess.org/training/*"],
-      "js": ["content_script.js"]
+      "matches": ["https://lichess.org/training", "https://lichess.org/training/*"],
+      "js": ["lib/extract.js", "content_script.js"]
     }
   ]
 }
